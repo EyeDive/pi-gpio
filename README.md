@@ -1,36 +1,65 @@
 pi-gpio
 =======
 
-pi-gpio is a simple node.js based library to help access the GPIO of the Raspberry Pi (Debian Wheezy). It's modelled loosely around the built-in ``fs`` module.  
-It works with:
-* original Raspberry Pi (A and B)
-* model B revision 2 boards
-* Raspberry Pi Model A+
-* Raspberry Pi Model B+
+Forke from [https://github.com/rakeshpai/pi-gpio](rakeshpai/pi-gpio)
+
+
+pi-gpio-js is a nodejs library providing tools
+around the gpio ports of the Raspberry Pi.
 
 ```javascript
-var gpio = require("pi-gpio");
+    // load the GPIO manager
+    const gpioManager = require('pi-gpio-js');
 
-gpio.open(16, "output", function(err) {		// Open pin 16 for output
-	gpio.write(16, 1, function() {			// Set pin 16 high (1)
-		gpio.close(16);						// Close pin 16
-	});
-});
+    let gpio23; // we will store the gpio instance here
+
+    // open a GPIO port
+    gpioManager.open(23)
+        .then(gpio => {
+            // Set the direction to "in" for reading
+            gpio23 = gpio;
+            return gpio.setDirection(Gpio.DIRECTION_IN)
+        })
+        // .setDirection returns a promise, we resolve here
+        .then(gpio => {
+            // read the port
+            return gpio.read();
+        })
+        // .read returns a promise, we resolve here
+        .then(readValue => {
+            console.log(`GPIO ${gpio23.port} has value ${readValue}`);
+            gpioManager.close(23);
+        });
+
 ```
 
 ## How you can help
 
 Ways you can help:
 
-    - Review the pull requests and test them on a Pi for correctness.
+    - Review the pull requests and test them on various Pi for correctness.
     - Report Bugs.
     - Fix a bug or add something awesome, Send a pull request.
 
 ## About the pin configuration
 
-This couldn't have been more confusing. Raspberry Pi's physical pins are not laid out in any particular logical order. Most of them are given the names of the pins of the Broadcom chip it uses (BCM2835). There isn't even a logical relationship between the physical layout of the Raspberry Pi pin header and the Broadcom chip's pinout. The OS recognizes the names of the Broadcom chip and has nothing to do with the physical pin layout on the Pi. To add to the fun, the specs for the Broadcom chip are nearly impossible to get!
+This couldn't have been more confusing. Raspberry Pi's
+physical pins are not laid out in any particular logical
+order. Most of them are given the names of the pins of
+the Broadcom chip it uses (BCM2835). There isn't even a
+logical relationship between the physical layout of the
+Raspberry Pi pin header and the Broadcom chip's pinout.
+The OS recognizes the names of the Broadcom chip and has
+nothing to do with the physical pin layout on the Pi.
+To add to the fun, the specs for the Broadcom chip are
+nearly impossible to get!
 
-This library simplifies all of this (hopefully), by abstracting away the Broadcom chip details. You only need to refer to the pins as they are on the physical pin layout on the Raspberry PI. For your reference, the pin layout follows. All the pins marked "GPIO" can be used with this library, using pin numbers as below.
+This library simplifies all of this (hopefully), by
+abstracting away the Broadcom chip details. You only need
+to refer to the pins as they are on the physical pin
+layout on the Raspberry PI. For your reference, the pin
+layout follows. All the pins marked "GPIO" can be used
+with this library, using pin numbers as below.
 
 <table>
 	<tr>
@@ -320,104 +349,57 @@ This library simplifies all of this (hopefully), by abstracting away the Broadco
 
 That gives you several GPIO pins to play with: pins 7, 11, 12, 13, 15, 16, 18 and 22 (with A+ and B+ giving 29, 31, 32, 33, 35, 37, 38 and 40). You should provide these physical pin numbers to this library, and not bother with what they are called internally. Easy-peasy.
 
+## Requirements
+
+### Nodejs 6
+```javascript
+// @todo : test node instalation on various versions of the Pi
+```
+
+pi-gpio-js is initialy developped on the Raspberry Pi 0
+and nodejs 6 (witch is a LTS version of node).
+
+To install nodejs 6 on your Raspberry Pi :
+
+```bash
+# download the ARMv6 binaries of Nodejs
+# Note that the 6 in ARMv6 does not refere to node version
+# but to the ARM architechture used by the Pi.
+# ie for Nodejs v6.10.3 :
+wget https://nodejs.org/dist/v6.10.3/node-v6.10.3-linux-armv6l.tar.xz
+# untar
+tar xf node-v6.10.3-linux-armv6l.tar.xz
+# create simlinks for the node and npm binaries
+sudo ln -s /absolute/path/to/node/downlad/node-v6.10.3-linux-armv6l/bin/node /usr/bin/
+sudo ln -s /absolute/path/to/node/downlad/node-v6.10.3-linux-armv6l/bin/npm /usr/bin/
+# Job's done !
+# You have node 6 on your Pi
+```
+
+Important : That node installation is currently tested on
+ a Pi 0. I need it to be tested on other versions.
+ 
 ## Installation
 
-If you haven't already, get node and npm on the Pi. The simplest way is:
+```
+// @todo publish on npm
+```
 
-	sudo apt-get install nodejs npm
-
-The Raspberry Pi's GPIO pins require you to be root to access them. That's totally unsafe for several reasons. To get around this problem, you should use the excellent [gpio-admin](https://github.com/quick2wire/quick2wire-gpio-admin).
-
-Do the following on your raspberry pi:
-
-	git clone git://github.com/quick2wire/quick2wire-gpio-admin.git
-	cd quick2wire-gpio-admin
-	make
-	sudo make install
-	sudo adduser $USER gpio
-
-After this, you will need to logout and log back in. [Details](http://quick2wire.com/2012/05/safe-controlled-access-to-gpio-on-the-raspberry-pi/), if you are interested.
-
-Next, ``cd`` to your project directory and use npm to install pi-gpio in your project.
-
-	npm install pi-gpio
-
-That's it!
+pi-gpio-js is not yet in npm. I'll update that part when it's done :)
 
 ## Usage
 
-### .open(pinNumber, [options], [callback])
 
-Aliased to ``.export``
 
-Makes ``pinNumber`` available for use. 
+## Testing
 
-* ``pinNumber``: The pin number to make available. Remember, ``pinNumber`` is the physical pin number on the Pi. 
-* ``options``: (Optional) Should be a string, such as ``input`` or ``input pullup``. You can specify whether the pin direction should be `input` or `output` (or `in` or `out`). You can additionally set the internal pullup / pulldown resistor by sepcifying `pullup` or `pulldown` (or `up` or `down`). If options isn't provided, it defaults to `output`. If a direction (`input` or `output`) is not specified (eg. only `up`), then the direction defaults to `output`.
-* ``callback``: (Optional) Will be called when the pin is available for use. May receive an error as the first argument if something went wrong.
-
-### .close(pinNumber, [callback])
-
-Aliased to ``.unexport``
-
-Closes ``pinNumber``.
-
-* ``pinNumber``: The pin number to close. Again, ``pinNumber`` is the physical pin number on the Pi.
-* ``callback``: (Optional) Will be called when the pin is closed. Again, may receive an error as the first argument.
-
-### .setDirection(pinNumber, direction, [callback])
-
-Changes the direction from ``input`` to ``output`` or vice-versa.
-
-* ``pinNumber``: As usual.
-* ``direction``: Either ``input`` or ``in`` or ``output`` or ``out``.
-* ``callback``: Will be called when direction change is complete. May receive an error as usual.
-
-### .getDirection(pinNumber, [callback])
-
-Gets the direction of the pin. Acts like a getter for the method above.
-
-* ``pinNumber``: As usual
-* ``callback``: Will be called when the direction is received. The first argument could be an error. The second argument will either be ``in`` or ``out``. 
-
-### .read(pinNumber, [callback])
-
-Reads the current value of the pin. Most useful if the pin is in the ``input`` direction.
-
-* ``pinNumber``: As usual.
-* ``callback``: Will receive a possible error object as the first argument, and the value of the pin as the second argument. The value will be either ``0`` or ``1`` (numeric).
-
-Example:
-```javascript
-gpio.read(16, function(err, value) {
-	if(err) throw err;
-	console.log(value);	// The current state of the pin
-});
-```
-
-### .write(pinNumber, value, [callback])
-
-Writes ``value`` to ``pinNumber``. Will obviously fail if the pin is not in the ``output`` direction.
-
-* ``pinNumber``: As usual.
-* ``value``: Should be either a numeric ``0`` or ``1``. Any value that isn't ``0`` or ``1`` will be coerced to be boolean, and then converted to 0 (false) or 1 (true). Just stick to sending a numeric 0 or 1, will you? ;)
-* ``callback``: Will be called when the value is set. Again, might receive an error.
-
-## Misc
-
-* To run tests: ``npm install && npm test`` where you've got the checkout.
-* This module was created, ``git push``'ed and ``npm publish``'ed all from the Raspberry Pi! The Pi rocks!
-
-## Coming soon
-
-* Support for I2C and SPI (though it should already be possible to bit-bang the SPI protocol).
-* Any other suggestions?
+To run tests: ``npm install && npm test`` where you've got the checkout.
 
 ## License
 
 (The MIT License)
 
-Copyright (c) 2012 Rakesh Pai <rakeshpai@gmail.com>
+Copyright (c) 2017 EyeDive <anthony.maudry@eye-dive.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

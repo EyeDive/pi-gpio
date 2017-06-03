@@ -1,16 +1,17 @@
 {
-  "author": "Rakesh Pai <rakeshpai@gmail.com>",
-  "name": "pi-gpio",
+  "author": "Anthony Maudry <amaudry@gmaiL.com>",
+  "name": "pi-gpio-js",
   "description": "A simple node.js-based GPIO helper for the Raspberry Pi",
-  "version": "0.0.8",
+  "version": "0.1.1",
+  "license": "MIT"
   "repository": {
     "type": "git",
-    "url": "git@github.com:rakeshpai/pi-gpio.git"
+    "url": "git@github.com:EyeDive/pi-gpio-js.git"
   },
-  "homepage": "https://github.com/rakeshpai/pi-gpio",
-  "main": "./pi-gpio",
+  "homepage": "https://github.com/EyeDive/pi-gpio-js",
+  "main": "./pi-gpio-js",
   "bugs": {
-    "url": "https://github.com/rakeshpai/pi-gpio/issues"
+    "url": "https://github.com/EyeDive/pi-gpio-js/issues"
   },
   "tags": [
     "raspberry",
@@ -18,14 +19,17 @@
     "gpio",
     "simple"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "fs": "0.0.1-security"
+  },
   "devDependencies": {
     "mocha": "1.x",
     "should": "1.x"
   },
   "optionalDependencies": {},
   "engines": {
-    "node": "*"
+    "node": "~6"
   },
   "scripts": {
     "test": "mocha --reporter spec"
