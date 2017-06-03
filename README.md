@@ -1,7 +1,7 @@
 pi-gpio
 =======
 
-Forke from [https://github.com/rakeshpai/pi-gpio](rakeshpai/pi-gpio)
+Forked from [https://github.com/rakeshpai/pi-gpio](rakeshpai/pi-gpio)
 
 
 pi-gpio-js is a nodejs library providing tools
