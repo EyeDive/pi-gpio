@@ -389,7 +389,7 @@ pi-gpio-js is not yet in npm. I'll update that part when it's done :)
 
 ## Usage
 
-
+See the [https://github.com/EyeDive/pi-gpio-js/blob/master/docs/index.md](docs)
 
 ## Testing
 
