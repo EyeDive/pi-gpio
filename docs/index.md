@@ -12,13 +12,13 @@ refere to the [README](https://github.com/EyeDive/pi-gpio-js/blob/master/README.
 
 ## How it works
 
-Basically requiring the library will provide you with a [<GpioManager>]() instance.
+Basically requiring the library will provide you with a `<GpioManager>` instance.
 
 That manager comes with two methods : `.open()` and `.close()` witch, well... open
 or close GPIO ports.
 
 Each method returns a Promise. The `.open()` method, when the promise is resolved,
-provides a [<Gpio>]() object instance witch has its own methods to read or write it.
+provides a `<Gpio>` object instance witch has its own methods to read or write it.
 
 The Broadcom chip has its own terminology for pin numbers. The library tries to simplify that.
 
