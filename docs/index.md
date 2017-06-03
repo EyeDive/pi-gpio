@@ -119,7 +119,7 @@ This will allow you to change the value of a GPIO port
 
 ```javascript
 "use strict";
-const gpioManager = require('./pi-gpio-js');
+const gpioManager = require('pi-gpio-js');
 
 let gpio24;
 
@@ -178,7 +178,7 @@ two others events (`up` ot `fown`) depending on the new state of the port.
  
 ```javascript
 "use strict";
-const gpioManager = require('./pi-gpio-js');
+const gpioManager = require('pi-gpio-js');
 let gpio21;
 
 // Lets define the handlers.
