@@ -3,7 +3,7 @@
   "name": "pi-gpio-js",
   "description": "A simple node.js-based GPIO helper for the Raspberry Pi",
   "version": "0.1.1",
-  "license": "MIT"
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git@github.com:EyeDive/pi-gpio-js.git"
