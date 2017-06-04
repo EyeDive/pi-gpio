@@ -2,23 +2,23 @@
 
 Welcome. And thank you to have gone so far in the repo !
 
-pi-gpio-js is a fork of [https://github.com/rakeshpai/pi-gpio](rakeshpai/pi-gpio).
+pi-gpio-js is a fork of [rakeshpai/pi-gpio](https://github.com/rakeshpai/pi-gpio).
 
 It has been tested on a Raspberry Pi 0 with nodejs 6.
 
 ## Installation
 
-refere to the [](README).
+refere to the [README](https://github.com/EyeDive/pi-gpio-js/blob/master/README.md#installation).
 
 ## How it works
 
-Basically requiring the library will provide you with a [](<GpioManager>) instance.
+Basically requiring the library will provide you with a `<GpioManager>` instance.
 
 That manager comes with two methods : `.open()` and `.close()` witch, well... open
 or close GPIO ports.
 
 Each method returns a Promise. The `.open()` method, when the promise is resolved,
-provides a [](<Gpio>) object instance witch has its own methods to read or write it.
+provides a `<Gpio>` object instance witch has its own methods to read or write it.
 
 The Broadcom chip has its own terminology for pin numbers. The library tries to simplify that.
 
@@ -119,7 +119,7 @@ This will allow you to change the value of a GPIO port
 
 ```javascript
 "use strict";
-const gpioManager = require('./pi-gpio-js');
+const gpioManager = require('pi-gpio-js');
 
 let gpio24;
 
@@ -178,7 +178,7 @@ two others events (`up` ot `fown`) depending on the new state of the port.
  
 ```javascript
 "use strict";
-const gpioManager = require('./pi-gpio-js');
+const gpioManager = require('pi-gpio-js');
 let gpio21;
 
 // Lets define the handlers.
