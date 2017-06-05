@@ -3,13 +3,14 @@ pi-gpio
 
 Forked from [rakeshpai/pi-gpio](https://github.com/rakeshpai/pi-gpio)
 
+pi-gpio-js is a nodejs library providing tools around
+the gpio ports of the Raspberry Pi.
 
-pi-gpio-js is a nodejs library providing tools
-around the gpio ports of the Raspberry Pi.
+The ports can be used using promise or events.
 
 ```javascript
     // load the GPIO manager
-    const gpioManager = require('pi-gpio-js');
+    const gpioManager = require('pi-gpio-js').GpioManager;
 
     let gpio23; // we will store the gpio instance here
 
@@ -37,317 +38,107 @@ around the gpio ports of the Raspberry Pi.
 
 Ways you can help:
 
+    - Develop mappers for various version of the Pi
     - Review the pull requests and test them on various Pi for correctness.
     - Report Bugs.
     - Fix a bug or add something awesome, Send a pull request.
 
 ## About the pin configuration
 
-This couldn't have been more confusing. Raspberry Pi's
-physical pins are not laid out in any particular logical
-order. Most of them are given the names of the pins of
-the Broadcom chip it uses (BCM2835). There isn't even a
-logical relationship between the physical layout of the
-Raspberry Pi pin header and the Broadcom chip's pinout.
-The OS recognizes the names of the Broadcom chip and has
-nothing to do with the physical pin layout on the Pi.
-To add to the fun, the specs for the Broadcom chip are
-nearly impossible to get!
+The pin naming for the raspberry Pi is quite confusing.
+It uses the Broadcom naming witch apparently lacks of
+logic (at least to me).
 
-This library simplifies all of this (hopefully), by
-abstracting away the Broadcom chip details. You only need
-to refer to the pins as they are on the physical pin
-layout on the Raspberry PI. For your reference, the pin
-layout follows. All the pins marked "GPIO" can be used
-with this library, using pin numbers as below.
+The initial library was providing a numeral way to name
+the pin. Quite simple : from left to right and from top
+to down.
 
-<table>
-	<tr>
-		<td>
-			P1 - 3.3v
-		</td>
-		<td>
-			1
-		</td>
-		<td>
-			2
-		</td>
-		<td>
-			5v
-		</td>
-	</tr>
-	<tr>
-		<td>
-			I2C SDA
-		</td>
-		<td>
-			3
-		</td>
-		<td >
-			4
-		</td>
-		<td>
-			--
-		</td>
-	</tr>
-	<tr>
-		<td>
-			I2C SCL
-		</td>
-		<td>
-			5
-		</td>
-		<td>
-			6
-		</td>
-		<td>
-			Ground
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			7
-		</td>
-		<td>
-			8
-		</td>
-		<td>
-			TX
-		</td>
-	</tr>
-	<tr>
-		<td>
-			--
-		</td>
-		<td>
-			9
-		</td>
-		<td>
-			10
-		</td>
-		<td>
-			RX
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			11
-		</td>
-		<td>
-			12
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			13
-		</td>
-		<td>
-			14
-		</td>
-		<td>
-			--
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			15
-		</td>
-		<td>
-			16
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-	<tr>
-		<td>
-			--
-		</td>
-		<td>
-			17
-		</td>
-		<td>
-			18
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-	<tr>
-		<td>
-			SPI MOSI
-		</td>
-		<td>
-			19
-		</td>
-		<td>
-			20
-		</td>
-		<td>
-			--
-		</td>
-	</tr>
-	<tr>
-		<td>
-			SPI MISO
-		</td>
-		<td>
-			21
-		</td>
-		<td>
-			22
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-	<tr>
-		<td>
-			SPI SCLK
-		</td>
-		<td>
-			23
-		</td>
-		<td>
-			24
-		</td>
-		<td>
-			SPI CE0
-		</td>
-	</tr>
-	<tr>
-		<td>
-			--
-		</td>
-		<td>
-			25
-		</td>
-		<td>
-			26
-		</td>
-		<td>
-			SPI CE1
-		</td>
-	</tr>
-	<tr>
-		<td colspan="4">Model A+ and Model B+ additional pins</td>
-	</tr>
-	<tr>
-		<td>
-			ID_SD
-		</td>
-		<td>
-			27
-		</td>
-		<td>
-			28
-		</td>
-		<td>
-			ID_SC
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			29
-		</td>
-		<td>
-			30
-		</td>
-		<td>
-			--
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			31
-		</td>
-		<td>
-			32
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			33
-		</td>
-		<td>
-			34
-		</td>
-		<td>
-			--
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			35
-		</td>
-		<td>
-			36
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-	<tr>
-		<td>
-			GPIO
-		</td>
-		<td>
-			37
-		</td>
-		<td>
-			38
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-	<tr>
-		<td>
-			--
-		</td>
-		<td>
-			39
-		</td>
-		<td>
-			40
-		</td>
-		<td>
-			GPIO
-		</td>
-	</tr>
-</table>
+I kept that naming witch has two advantages : it is easy
+to count the pins to find the good one and it adds a
+layer of abstraction around the pins allowing to map them
+for any Broadcom card.
 
-That gives you several GPIO pins to play with: pins 7, 11, 12, 13, 15, 16, 18 and 22 (with A+ and B+ giving 29, 31, 32, 33, 35, 37, 38 and 40). You should provide these physical pin numbers to this library, and not bother with what they are called internally. Easy-peasy.
+Very valuable information about Raspberry Pi pins can
+be found [there](https://fr.pinout.xyz).
+
+Here is the layout for a Raspberry Pi Zero W :
+
+assuming :
+ - your looking your card from top (proc visible and pins
+ iin 2 vertical columns on your right hand)
+ - the 3.3V pin is top left
+
+Don't mind the DIR column. that exemple is a copy/past
+of the output of a utility present in library
+
+```
+     ___________________________________________
+    |     LEFT COLUMN     |     RIGHT COLUMN    |
+    |    LEFT | DIR | PIN | PIN | DIR | RIGHT   |
+    |    GPIO |     | POS | POS |     | GPIO    |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | 3.3 V   | N/A | 1   |   2 | N/A |     5 V |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 2  | in  | 3   |   4 | N/A |     5 V |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 3  | in  | 5   |   6 | N/A |  Ground |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 4  | in  | 7   |   8 |  in | GPIO 14 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | Ground  | N/A | 9   |  10 |  in | GPIO 15 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 17 | in  | 11  |  12 |  in | GPIO 18 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 27 | in  | 13  |  14 | N/A |  Ground |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 22 | in  | 15  |  16 |  in | GPIO 23 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | 3.3 V   | N/A | 17  |  18 |  in | GPIO 24 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 10 | in  | 19  |  20 | N/A |  Ground |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 9  | in  | 21  |  22 |  in | GPIO 25 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 11 | in  | 23  |  24 |  in |  GPIO 8 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | Ground  | N/A | 25  |  26 |  in |  GPIO 7 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | IDSD 0  | N/A | 27  |  28 | N/A |  IDSD 1 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 5  | in  | 29  |  30 | N/A |  Ground |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 6  | in  | 31  |  32 |  in | GPIO 12 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 13 | in  | 33  |  34 | N/A |  Ground |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 19 | in  | 35  |  36 |  in | GPIO 16 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | GPIO 26 | in  | 37  |  38 |  in | GPIO 20 |
+    |_________|_____|_____|_____|_____|_________|
+    |         |     |     |     |     |         |
+    | Ground  | N/A | 39  |  40 |  in | GPIO 21 |
+    |_________|_____|_____|_____|_____|_________|
+
+```
 
 ## Requirements
 
@@ -374,26 +165,53 @@ sudo ln -s /absolute/path/to/node/downlad/node-v6.10.3-linux-armv6l/bin/node /us
 sudo ln -s /absolute/path/to/node/downlad/node-v6.10.3-linux-armv6l/bin/npm /usr/bin/
 # Job's done !
 # You have node 6 on your Pi
+node -v
+# prints "v6.10.3"
+npm -v
+# prints "3.10.10"
 ```
 
-Important : That node installation is currently tested on
- a Pi 0. I need it to be tested on other versions.
+Important : That node installation is currently tested
+on a Pi 0. I need it to be tested on other versions.
  
 ## Installation
 
 ```
-// @todo publish on npm
+npm install --save pi-gpio-js
 ```
-
-pi-gpio-js is not yet in npm. I'll update that part when it's done :)
 
 ## Usage
 
+Require the lib's manager :
+
+```javascript
+// get the manager
+const gpioManager = require('pi-gpio-js').GpioManager;
+
+// open a port ie : 23
+gpioManager.open(23)
+    .then(gpio => {
+        // start the magic  
+    });
+
+```
+
 See the [docs](https://github.com/EyeDive/pi-gpio-js/blob/master/docs/index.md)
+for more info
 
 ## Testing
 
 To run tests: ``npm install && npm test`` where you've got the checkout.
+
+## Developing
+
+You are invited to add mappers and port types or enhance
+port types.
+
+Feel free to send pull request ;)
+
+See the [developer docs](https://github.com/EyeDive/pi-gpio-js/blob/master/docs/index.md)
+for informations.
 
 ## License
 

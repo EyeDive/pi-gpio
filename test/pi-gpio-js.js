@@ -1,13 +1,14 @@
 "use strict";
-const gpioManager = require("../pi-gpio-js"),
+const gpioManager = require("../pi-gpio-js").GpioManager,
     should = require("should"),
     fs = require("fs"),
     gpioTest = require('./Gpio/Gpio'),
-    Gpio = require('../src/Gpio/Gpio').Gpio;
+    Gpio = require('../src/Port/Gpio').Gpio
+;
 
 describe("GpioManager", function () {
     describe('.open', function() {
-        it("should open a Gpio port", function (done) {
+        it("should open a Command port", function (done) {
             return gpioManager.open(23)
                 .then(gpio => {
                     gpio.should.be.an.instanceOf(Gpio);
@@ -34,7 +35,7 @@ describe("GpioManager", function () {
 
     after(function(done) {
         describe(".close", function() {
-            it("should close a Gpio port", function(done) {
+            it("should close a Command port", function(done) {
                 gpioManager.close(23)
                     .then(result => {
                         result.should.be.a.Boolean;

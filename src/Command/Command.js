@@ -1,19 +1,19 @@
-/**
- * Created by amaud on 03/06/2017.
- */
 "use strict";
 const fs = require('fs');
 const exec = require('child_process').exec;
 
 /**
- * GpioCommand class
+ * PortCommand class
  *
- * Provides methods wrapping bash commands to read / write Gpio ports
+ * Provides methods wrapping bash commands to read / write Command ports
  *
  * @property _sysPath the path to the gpio class (ie : /sys/class/gpio) depends on the kernel version
+ *
+ * @author Anthony Maudry <anthony.maudry@eye-dive.com>
+ *
+ * @license MIT
  */
-class GpioCommand {
-
+class PortCommand {
     /**
      * Constructor
      */
@@ -44,6 +44,16 @@ class GpioCommand {
         return (`echo ${value} > ${this._makeFile(file, port)}`).trim();
     }
 
+    /**
+     * Generates a file path from a file name (export, value, direction, etc.) and a GPIO port
+     *
+     * @param file
+     * @param port
+     *
+     * @returns {string}
+     *
+     * @private
+     */
     _makeFile(file, port) {
         if (!port || isNaN(port)) {
             return `${this._sysPath}/${file}`;
@@ -65,11 +75,7 @@ class GpioCommand {
      * @private
      */
     _makeFileReadCommand(file, port) {
-        if (!port || isNaN(port)) {
-            return (`cat ${this._sysPath}/${file}`).trim();
-        } else {
-            return (`cat ${this._sysPath}/gpio${port}/${file}`).trim();
-        }
+        return (`cat ${this._makeFile(file, port)}`).trim();
     }
 
     /**
@@ -131,11 +137,17 @@ class GpioCommand {
      * @returns {Promise}
      */
     getDirection(port) {
-        return this._run(this._makeFileReadCommand('direction', port));
+        if (fs.existsSync(this._makeFile('direction', port))) {
+            return this._run(this._makeFileReadCommand('direction', port));
+        } else {
+            return new Promise(resolve => {
+                resolve(null);
+            });
+        }
     }
 
     /**
-     * Sets the direction of the port from the {Gpio}._newDirection
+     * Sets the direction of the port from the {Command}._newDirection
      *
      * @param {string} direction
      * @param {Number} port the port from with to get direction
@@ -143,7 +155,13 @@ class GpioCommand {
      * @returns {Promise}
      */
     setDirection(direction, port) {
-        return this._run(this._makeFileWriteCommand(direction, 'direction', port));
+        if (fs.existsSync(this._makeFile('direction', port))) {
+            return this._run(this._makeFileWriteCommand(direction, 'direction', port));
+        } else {
+            return new Promise((resolve, reject) => {
+                reject('Can\'t set direction');
+            });
+        }
     }
 
     /**
@@ -154,7 +172,13 @@ class GpioCommand {
      * @returns {Promise}
      */
     getValue(port) {
-        return this._run(this._makeFileReadCommand('value', port));
+        if (fs.existsSync(this._makeFile('value', port))) {
+            return this._run(this._makeFileReadCommand('value', port));
+        } else {
+            return new Promise(resolve => {
+                resolve(null);
+            });
+        }
     }
 
     /**
@@ -166,65 +190,31 @@ class GpioCommand {
      * @returns {Promise}
      */
     setValue(value, port) {
-        return this._run(this._makeFileWriteCommand(value ? '1' : '0', 'value', port));
+        if (fs.existsSync(this._makeFile('value', port))) {
+            return this._run(this._makeFileWriteCommand(value ? '1' : '0', 'value', port));
+        } else {
+            return new Promise((resolve, reject) => {
+                reject('Can\'t set value');
+            });
+        }
     }
 
     /**
-     * Watches the value changes for a GPIO port.
-     * The onChange callback will be passed two parameters : 'value' and 'port'.
-     * 'value' will contain the new port value and 'port' the port number.
+     * Gets an singleton instance of PortCommand
      *
-     * @param {Number} port the port for with to watch value changes
-     * @param {Function} onChange The function to call when the value changes
-     */
-    watchValue(port, timeout, onChange) {
-        const file = this._makeFile('value', port),
-            that = this;
-
-        setInterval(() => {
-
-        }, timeout);
-
-        fs.watch(file, (eventType, changedFile) => {
-            if (eventType === 'change' && changedFile === file) {
-                that.getValue(port)
-                    .then(value => {
-                        onChange(value, port);
-                    })
-                    .catch(error => {
-                        throw new Error(`WATCH ERROR : could not get value for port ${port}`)
-                    });
-            }
-        });
-    }
-
-    /**
-     * Stops the watch on value for a port
-     *
-     * @param port
-     */
-    unwatchValue(port) {
-        const file = this._makeFile('value', port);
-
-        fs.unwatch(file);
-    }
-
-    /**
-     * Gets an singleton instance of GpioCommand
-     *
-     * @returns {GpioCommand}
+     * @returns {PortCommand}
      */
     static get instance() {
-        if (!GpioCommand._instance) {
-            GpioCommand._instance = new GpioCommand();
+        if (!PortCommand._instance) {
+            PortCommand._instance = new PortCommand();
         }
 
-        return GpioCommand._instance;
+        return PortCommand._instance;
     }
 }
 
-const gpioCommand = GpioCommand.instance;
+const portCommand = PortCommand.instance;
 
 module.exports = {
-    gpioCommand: gpioCommand
+    portCommand: portCommand
 };
