@@ -43,12 +43,24 @@ There are 3 usages for the library : read, write or listen a port.
 
 ## Classes
 
+Classes documentation available
+[here](./classes/classes.md)
+
 ## Developers
 
+A doc for developers is comming soon. During the wait you
+can check the [classes documentation](./classes/classes.md)
+
+## Issues and demands
+
+The issue tracker is
+[here](https://github.com/EyeDive/pi-gpio-js/issues).
+
+This is also the place to post demands.
 
 ## Thank You
 
-This doc is done. Thank you for reading.
+That's all for now. Thank you for getting so far.
 
-You got the main functions of the lib. A more complete doc is to come.
+If you 
 
