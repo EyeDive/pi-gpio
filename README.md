@@ -210,8 +210,12 @@ port types.
 
 Feel free to send pull request ;)
 
-See the [developer docs](https://github.com/EyeDive/pi-gpio-js/blob/master/docs/index.md)
+See the [developer docs](https://github.com/EyeDive/pi-gpio-js/blob/master/docs/index.md#developers)
 for informations.
+
+## Issues
+
+Issues goes [here](https://github.com/EyeDive/pi-gpio-js/issues)
 
 ## License
 
