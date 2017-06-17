@@ -38,10 +38,9 @@ class Port extends EventEmitter{
         super();
         this._pinNumber = pinNumber;
         this._direction = null;
-        this._events = {};
-        this._listenTimer = null;
         this._command = portCommand;
         this._port = port;
+        this._listenTimer = null;
     }
 
     /**
@@ -296,7 +295,7 @@ class Port extends EventEmitter{
                 prevValue = value;
 
                 that.emit('listen:start', that);
-                this._listenTimer = setInterval(() => {
+                that._listenTimer = setInterval(() => {
                     that.read()
                         .then(value => {
                             if (value !== prevValue) {
@@ -322,9 +321,11 @@ class Port extends EventEmitter{
      * @returns {Port}
      */
     unlisten() {
-        clearInterval(this._listenTimer);
-
-        this.emit('listen:stop', this);
+        if (this._listenTimer !== null) {
+            clearInterval(this._listenTimer);
+            this._listenTimer = null;
+            this.emit('listen:stop', this);
+        }
 
         return this;
     }
