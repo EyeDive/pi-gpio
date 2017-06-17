@@ -41,7 +41,6 @@ class Port extends EventEmitter{
         this._command = portCommand;
         this._port = port;
         this._listenTimer = null;
-        this._lastValue = null;
     }
 
     /**
