@@ -277,7 +277,7 @@ unbinds a handler from a `Port` event.
  from
  - __handler__ -(`{Function}`) : The handler to unbind
 
-#### `{Port}` trigger(`{string}` event[[, arg1], ...])
+#### `{Port}` emit(`{string}` event[[, arg1], ...])
 
 ##### Description
 

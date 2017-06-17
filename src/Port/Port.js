@@ -1,4 +1,5 @@
-const portCommand = require('../Command/Command').portCommand;
+const portCommand = require('../Command/Command').portCommand,
+    EventEmitter = require('events').EventEmitter;
 
 /**
  * Abstract class Port. Defines methods and properties common to Pi ports.
@@ -7,7 +8,7 @@ const portCommand = require('../Command/Command').portCommand;
  *
  * @license MIT
  */
-class Port {
+class Port extends EventEmitter{
     // CONSTANTS
     /**
      * The "in" value for ports
@@ -34,6 +35,7 @@ class Port {
      * @param {Number|string} port Broadcom pin name
      */
     constructor(pinNumber, port) {
+        super();
         this._pinNumber = pinNumber;
         this._direction = null;
         this._events = {};
@@ -124,7 +126,7 @@ class Port {
         return new Promise((resolve, reject) => {
             this._command.export(that.port)
                 .then(() => {
-                    that.trigger('exported', that);
+                    that.emit('exported', that);
                     resolve(that);
                 })
                 .catch(reject);
@@ -147,7 +149,7 @@ class Port {
         return new Promise((resolve, reject) => {
             this._command.unexport(this.port)
                 .then(result => {
-                    that.trigger('unexported', that);
+                    that.emit('unexported', that);
                     resolve(result);
                 })
                 .catch(reject);
@@ -179,8 +181,8 @@ class Port {
                     const oldDirection = that._direction;
                     that._direction = direction;
                     if (that._direction !== oldDirection) {
-                        that.trigger('direction:changed', that);
-                        that.trigger(`direction:${that._direction}`, that);
+                        that.emit('direction:changed', that);
+                        that.emit(`direction:${that._direction}`, that);
                     }
                     resolve(that);
                 })
@@ -201,7 +203,7 @@ class Port {
         if (!this.exportable) {
             return new Promise((resolve, reject) => {
                 that._direction = -1;
-                that.trigger('direction:updated', that);
+                that.emit('direction:updated', that);
                 resolve(that);
             });
         }
@@ -210,7 +212,7 @@ class Port {
             this._command.getDirection(that.port)
                 .then(direction => {
                     that._direction = direction;
-                    that.trigger('direction:updated', that);
+                    that.emit('direction:updated', that);
                     resolve(that);
                 })
                 .catch(reject);
@@ -293,7 +295,7 @@ class Port {
             .then(value => {
                 prevValue = value;
 
-                that.trigger('listen:start', that);
+                that.emit('listen:start', that);
                 this._listenTimer = setInterval(() => {
                     that.read()
                         .then(value => {
@@ -322,69 +324,7 @@ class Port {
     unlisten() {
         clearInterval(this._listenTimer);
 
-        this.trigger('listen:stop', this);
-
-        return this;
-    }
-
-    /**
-     * Registers a handler to an event. Handler will be passed parameters depending on event triggered.
-     *
-     * @param event
-     * @param handler
-     *
-     * @returns {Port}
-     */
-    on(event, handler) {
-        if (!this._events.hasOwnProperty(event)) {
-            this._events[event] = [];
-        }
-
-        if (this._events[event].indexOf(handler) === -1) {
-            this._events[event].push(handler);
-        }
-
-        return this;
-    }
-
-    /**
-     * Unregisters a handler from an event.
-     *
-     * @param event
-     * @param handler
-     *
-     * @returns {Port}
-     */
-    off(event, handler) {
-        if (!this._events.hasOwnProperty(event)) {
-            return this;
-        }
-
-        const index = this._events[event].indexOf(handler);
-
-        if (index !== -1) {
-            this._events[event].slice(index, 1);
-        }
-
-        return this;
-    }
-
-    /**
-     * Triggers an event on the Port instance.
-     *
-     * @param event
-     * @param args
-     *
-     * @returns {Port}
-     */
-    trigger(event, ...args) {
-        if (!this._events.hasOwnProperty(event)) {
-            return this;
-        }
-
-        for (let handler of this._events[event]) {
-            handler.apply(null, args);
-        }
+        this.emit('listen:stop', this);
 
         return this;
     }
@@ -397,11 +337,11 @@ class Port {
      * @private
      */
     _onValueChange(value) {
-        this.trigger('value:changed', this, value);
+        this.emit('value:changed', this, value);
         if (value) {
-            this.trigger('value:up', this);
+            this.emit('value:up', this);
         } else {
-            this.trigger('value:down', this);
+            this.emit('value:down', this);
         }
     }
 
