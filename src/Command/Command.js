@@ -1,6 +1,7 @@
 "use strict";
-const fs = require('fs');
-const exec = require('child_process').exec;
+const fs = require('fs'),
+    exec = require('child_process').exec,
+    Listener = require('../Listener/Listener');
 
 /**
  * PortCommand class
@@ -172,13 +173,20 @@ class PortCommand {
      * @returns {Promise}
      */
     getValue(port) {
-        if (fs.existsSync(this._makeFile('value', port))) {
-            return this._run(this._makeFileReadCommand('value', port));
-        } else {
-            return new Promise(resolve => {
+        const filePath = this._makeFile('value', port);
+        return new Promise((resolve, reject) => {
+            if (fs.existsSync(filePath)) {
+                fs.readFile(filePath, (error, data) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data.toString().trim());
+                    }
+                });
+            } else {
                 resolve(null);
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -197,6 +205,10 @@ class PortCommand {
                 reject('Can\'t set value');
             });
         }
+    }
+
+    getPortFilePath(port, file) {
+        return this._makeFile(file, port);
     }
 
     /**
