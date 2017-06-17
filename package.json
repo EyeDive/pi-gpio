@@ -2,7 +2,7 @@
   "author": "Anthony Maudry <amaudry@gmaiL.com>",
   "name": "pi-gpio-js",
   "description": "A simple node.js-based GPIO helper for the Raspberry Pi",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "repository": {
     "type": "git",
