@@ -1,7 +1,6 @@
 "use strict";
 const fs = require('fs'),
-    exec = require('child_process').exec,
-    Listener = require('../Listener/Listener');
+    exec = require('child_process').exec;
 
 /**
  * PortCommand class
@@ -205,10 +204,6 @@ class PortCommand {
                 reject('Can\'t set value');
             });
         }
-    }
-
-    getPortFilePath(port, file) {
-        return this._makeFile(file, port);
     }
 
     /**

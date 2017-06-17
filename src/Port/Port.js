@@ -1,6 +1,5 @@
 const portCommand = require('../Command/Command').portCommand,
-    EventEmitter = require('events').EventEmitter,
-    fs = require('fs');
+    EventEmitter = require('events').EventEmitter;
 
 /**
  * Abstract class Port. Defines methods and properties common to Pi ports.
@@ -41,7 +40,6 @@ class Port extends EventEmitter{
         this._direction = null;
         this._command = portCommand;
         this._port = port;
-        this._listenStream = null;
         this._listenTimer = null;
         this._lastValue = null;
     }
@@ -324,12 +322,11 @@ class Port extends EventEmitter{
      * @returns {Port}
      */
     unlisten() {
-        if (this._listenStream) {
-            this._listenStream.close();
-
+        if (this._listenTimer !== null) {
+            clearInterval(this._listenTimer);
+            this._listenTimer = null;
             this.emit('listen:stop', this);
         }
-
 
         return this;
     }
