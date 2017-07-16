@@ -68,6 +68,7 @@ class RevisionMapSelector {
      */
     _loadRevisions() {
         this.addMapForRevision('9000c1', Maps.PiZeroWMap);
+        this.addMapForRevision('a02082', Maps.PiZeroWMap); // Pi Three Model B has the exact same GPIO Header
     }
 
     /**
